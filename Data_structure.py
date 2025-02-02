@@ -9,6 +9,10 @@ ILLEGAL_CHARS: str = """
 
 
 def generate_random_username() -> str:
+    """
+this function will generate a random username
+ conforming to the rules of minecraft usernames
+    """
     uuid__name: str = str(uuid.uuid4())
     name: list = []
     for ix, i in enumerate(uuid__name.split("-")):
@@ -25,13 +29,16 @@ def generate_random_username() -> str:
     return "".join(name)
 
 
-@dataclass(sorted=True)
+@dataclass
 class UserMinecraft:
+    """
+this a data class containing all the data of a minecraft user instance
+    """
     name: str = generate_random_username()
-    Offline: bool = True
-    Vanilla: bool
-    Forge: bool
-    Fabric: bool
+    offline: bool = True
+    vanilla: bool
+    forge: bool
+    fabric: bool
     uuid: str
 
     def __init__(self):
@@ -45,13 +52,13 @@ class UserMinecraft:
                 new_name.append(i)
                 continue
         self.name = "".join(new_name)
-        if self.Vanilla:
-            self.Forge = False
-            self.Fabric = False
-        elif self.Forge:
-            self.Vanilla = False
-            self.Fabric = False
-        elif self.Fabric:
-            self.Vanilla = False
-            self.Forge = False
+        if self.vanilla:
+            self.forge = False
+            self.fabric = False
+        elif self.forge:
+            self.vanilla = False
+            self.fabric = False
+        elif self.fabric:
+            self.vanilla = False
+            self.forge = False
         self.uuid = str(uuid.uuid3(uuid.RESERVED_MICROSOFT, self.name))
