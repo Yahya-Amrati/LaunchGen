@@ -9,14 +9,11 @@ logging.basicConfig(level=logging.INFO, format=STANDARD_FORMAT)
 Error_log = logging.getLogger("Error_log")
 Error_log.setLevel(logging.ERROR)
 the_stream_handler = logging.StreamHandler()
-the_file_handler = logging.FileHandler("error.log")
-the_stream_handler.setFormatter(logging.Formatter(STANDARD_FORMAT))
+the_file_handler = logging.FileHandler("logs.log")
 the_file_handler.setFormatter(logging.Formatter(STANDARD_FORMAT))
-Error_log.addHandler(the_stream_handler)
 Error_log.addHandler(the_file_handler)
 Info_log = logging.getLogger("Info_log")
 Info_log.setLevel(logging.INFO)
-Info_log.addHandler(the_stream_handler)
 Info_log.addHandler(the_file_handler)
 
 
@@ -60,18 +57,18 @@ def check_for_wifi() -> bool:
     # the best way to check if there is an internet connection in the internet
     retry = 3
     backoff = 1
-    for i in range(retry):
-        for i in fetch_dns():
+    for _ in range(retry):
+        for b in fetch_dns():
+            Info_log.info("Trying to connect to %s", b["primary"])
             try:
-                Info_log.info("Trying to connect to %s", i["primary"])
-                with socket.create_connection((i["primary"], 53)):
+                with socket.create_connection((b["primary"], 53)):
                     return True
             except (socket.gaierror, socket.timeout):
                 continue
             except OSError:
+                Info_log.info("Trying to connect to %s", b["secondary"])
                 try:
-                    Info_log.info("Trying to connect to %s", i["secondary"])
-                    with socket.create_connection((i["secondary"], 53)):
+                    with socket.create_connection((b["secondary"], 53)):
                         return True
                 except (socket.gaierror, socket.timeout):
                     continue
@@ -79,3 +76,7 @@ def check_for_wifi() -> bool:
                     continue
         backoff *= 2
     return False
+
+
+if __name__ == "__main__":
+    check_for_wifi()
