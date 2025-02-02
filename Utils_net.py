@@ -3,6 +3,8 @@ import logging
 from typing import List, Dict
 import socket
 
+# cette Partie à été coder entierment par Yahya Amrati
+# 02/02/2025
 
 STANDARD_FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
 logging.basicConfig(level=logging.INFO, format=STANDARD_FORMAT)

@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 import uuid
 
+# cette Partie à été coder entierment par Yahya Amrati
+# 02/02/2025
 
 ILLEGAL_CHARS: str = """
 "!"#$%&'()*+,/:;<=>?@[\\]^`{|}~ ¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸
