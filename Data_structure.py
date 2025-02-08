@@ -1,14 +1,36 @@
-from dataclasses import dataclass
+import sys
+import subprocess
+import os
 import uuid
+from typing import List
+from dataclasses import dataclass, field
+try :
+    import minecraft_launcher_lib
+except ImportError:
+    try:
+        command = [sys.executable, "-m", "pip", "install", "minecraft_launcher_lib"]  # pip install minecraft_launcher_lib
+        subprocess.run(command, check=True, text=True)
+    except subprocess.CalledProcessError as e:
+        raise ImportError from e
 
 # cette Partie à été coder entierment par Yahya Amrati
-# 02/02/2025
+# 05/02/2025
 
-ILLEGAL_CHARS: str = """
-"!"#$%&'()*+,/:;<=>?@[\\]^`{|}~ ¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸
-¹º»¼½¾¿×÷ʰʲʳʷʸⁿ℗℠™Ω℧←↑→↓↔↕✓✔✕✖✗✘☆★♠♣♥♦♪♫⛔⚠️🚀🔥
-💀😊🤖中文日本語हिन्दी"""
+LEGAL_CHARS: set = set("""abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_""")
 
+def get_appdata_universal() -> str:
+    """returns the universal appdata path"""
+    if sys.platform == "win32":
+        return os.getenv("APPDATA")
+    elif sys.platform .startswith("linux"):
+        return os.getenv("XDG_CONFIG_HOME")
+    elif sys.platform == "darwin":
+        return os.getenv("HOME")
+    else :
+        raise OSError("Unsupported platform")
+
+MC_PATH = os.path.join(get_appdata_universal(), "Minecraft")
+os.makedirs(MC_PATH, exist_ok=True)
 
 def generate_random_username() -> str:
     """
@@ -23,36 +45,32 @@ this function will generate a random username
         if ix == 15:
             break
         for x in i.split():
-            if any(ILLEGAL_CHARS in x):
+            if x not in LEGAL_CHARS:
                 i = i.replace(x, "")
             else:
                 continue
         name.append(i)
     return "".join(name)
 
-
 @dataclass
 class UserMinecraft:
     """
 this a data class containing all the data of a minecraft user instance
     """
+    uuid: str
     name: str = generate_random_username()
     offline: bool = True
-    vanilla: bool
-    forge: bool
-    fabric: bool
-    uuid: str
+    vanilla: bool = True
+    forge: bool = False
+    fabric: bool = False
 
     def __init__(self):
         # correct values if possible
         new_name: list = []
         for i in self.name:
-            if any(ILLEGAL_CHARS, i):
+            if i not in LEGAL_CHARS:
                 i = ""
-                new_name.append(i)
-            else:
-                new_name.append(i)
-                continue
+            new_name.append(i)
         self.name = "".join(new_name)
         if self.vanilla:
             self.forge = False
@@ -64,3 +82,13 @@ this a data class containing all the data of a minecraft user instance
             self.vanilla = False
             self.forge = False
         self.uuid = str(uuid.uuid3(uuid.RESERVED_MICROSOFT, self.name))
+
+@dataclass
+class MinecraftInstances:
+    """
+this a data class containing all the data of a minecraft instance
+    """
+    names: List[str] = field(default_factory=list)
+    
+    def __init__(self) -> None:
+        self.names = [i["id"] for i in minecraft_launcher_lib.utils.get_installed_versions(MC_PATH)]

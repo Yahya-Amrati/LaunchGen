@@ -3,8 +3,8 @@ import logging
 from typing import List, Dict
 import socket
 
-# cette Partie à été coder entierment par Yahya Amrati
-# 02/02/2025
+# Cette partie à été coder entierement par Yahya Amrati
+# -> 02/02/2025
 
 STANDARD_FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
 logging.basicConfig(level=logging.INFO, format=STANDARD_FORMAT)
@@ -61,14 +61,14 @@ def check_for_wifi() -> bool:
     backoff = 1
     for _ in range(retry):
         for b in fetch_dns():
-            Info_log.info("Trying to connect to %s", b["primary"])
+            Info_log.info("Trying to connect to DNS %s", b["primary"])
             try:
                 with socket.create_connection((b["primary"], 53)):
                     return True
             except (socket.gaierror, socket.timeout):
                 continue
             except OSError:
-                Info_log.info("Trying to connect to %s", b["secondary"])
+                Info_log.info("Trying to connect to DNS %s", b["secondary"])
                 try:
                     with socket.create_connection((b["secondary"], 53)):
                         return True
@@ -77,6 +77,7 @@ def check_for_wifi() -> bool:
                 except OSError:
                     continue
         backoff *= 2
+    Error_log.error("Failed to connect to any DNS")
     return False
 
 
