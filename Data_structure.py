@@ -4,11 +4,18 @@ import os
 import uuid
 from typing import List
 from dataclasses import dataclass, field
-try :
+
+try:
     import minecraft_launcher_lib
 except ImportError:
     try:
-        command = [sys.executable, "-m", "pip", "install", "minecraft_launcher_lib"]  # pip install minecraft_launcher_lib
+        command = [
+            sys.executable,
+            "-m",
+            "pip",
+            "install",
+            "minecraft_launcher_lib",
+        ]  # pip install minecraft_launcher_lib
         subprocess.run(command, check=True, text=True)
     except subprocess.CalledProcessError as e:
         raise ImportError from e
@@ -16,26 +23,31 @@ except ImportError:
 # cette Partie à été coder entierment par Yahya Amrati
 # 05/02/2025
 
-LEGAL_CHARS: set = set("""abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_""")
+LEGAL_CHARS: set = set(
+    """abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"""
+)
+
 
 def get_appdata_universal() -> str:
     """returns the universal appdata path"""
     if sys.platform == "win32":
         return os.getenv("APPDATA")
-    elif sys.platform .startswith("linux"):
+    elif sys.platform.startswith("linux"):
         return os.getenv("XDG_CONFIG_HOME")
     elif sys.platform == "darwin":
         return os.getenv("HOME")
-    else :
+    else:
         raise OSError("Unsupported platform")
+
 
 MC_PATH = os.path.join(get_appdata_universal(), "Minecraft")
 os.makedirs(MC_PATH, exist_ok=True)
 
+
 def generate_random_username() -> str:
     """
-this function will generate a random username
- conforming to the rules of minecraft usernames
+    this function will generate a random username
+     conforming to the rules of minecraft usernames
     """
     uuid__name: str = str(uuid.uuid4())
     name: list = []
@@ -52,11 +64,13 @@ this function will generate a random username
         name.append(i)
     return "".join(name)
 
+
 @dataclass
 class UserMinecraft:
     """
-this a data class containing all the data of a minecraft user instance
+    this a data class containing all the data of a minecraft user instance
     """
+
     uuid: str
     name: str = generate_random_username()
     offline: bool = True
@@ -83,12 +97,38 @@ this a data class containing all the data of a minecraft user instance
             self.forge = False
         self.uuid = str(uuid.uuid3(uuid.RESERVED_MICROSOFT, self.name))
 
+
 @dataclass
 class MinecraftInstances:
     """
-this a data class containing all the data of a minecraft instance
+    this a data class containing all the data of a minecraft instance
     """
+
     names: List[str] = field(default_factory=list)
-    
+
     def __init__(self) -> None:
-        self.names = [i["id"] for i in minecraft_launcher_lib.utils.get_installed_versions(MC_PATH)]
+        self.names = [
+            i["id"]
+            for i in minecraft_launcher_lib.utils.get_installed_versions(MC_PATH)
+        ]
+
+@dataclass
+class MinecraftLauncher:
+    name: str
+    path: str = MC_PATH
+    is_forge = False
+    is_fabric = False
+    is_vanilla = True
+    crack_supported: bool = True
+    Is_version_bound: bool = True
+    Version_Launcher: str = "1.16.5"
+    Versions = field(default_factory=list)
+
+    def __init__(self) -> None:
+        if not self.Is_version_bound:
+            if self.is_forge:
+                self.Versions = minecraft_launcher_lib.forge.list_forge_versions()
+            elif self.is_fabric:
+                self.Versions = [i["version"] for i in minecraft_launcher_lib.fabric.get_all_loader_versions()]
+            else:
+                self.Versions = minecraft_launcher_lib.utils.get_version_list()

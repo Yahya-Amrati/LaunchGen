@@ -20,17 +20,17 @@ Info_log.addHandler(the_file_handler)
 
 
 def fetch_dns() -> List[Dict[str, str]]:
-    """ Fetching DNS's from a json file """
+    """Fetching DNS's from a json file"""
     default_dns = [
-                {"primary": "8.8.8.8", "secondary": "8.8.4.4"},
-                {"primary": "1.1.1.1", "secondary": "1.0.0.1"},
-                {"primary": "208.67.222.222", "secondary": "208.67.220.220"},
-                {"primary": "9.9.9.9", "secondary": "149.112.112.112"},
-                {"primary": "8.26.56.26", "secondary": "8.20.247.20"},
-                {"primary": "45.90.28.0", "secondary": "45.90.30.0"},
-                {"primary": "77.88.8.8", "secondary": "77.88.8.1"},
-                {"primary": "185.228.168.9", "secondary": "185.228.169.9"}
-            ]
+        {"primary": "8.8.8.8", "secondary": "8.8.4.4"},
+        {"primary": "1.1.1.1", "secondary": "1.0.0.1"},
+        {"primary": "208.67.222.222", "secondary": "208.67.220.220"},
+        {"primary": "9.9.9.9", "secondary": "149.112.112.112"},
+        {"primary": "8.26.56.26", "secondary": "8.20.247.20"},
+        {"primary": "45.90.28.0", "secondary": "45.90.30.0"},
+        {"primary": "77.88.8.8", "secondary": "77.88.8.1"},
+        {"primary": "185.228.168.9", "secondary": "185.228.169.9"},
+    ]
     try:
         with open("dns.json", "r", encoding="utf-8") as f:
             data = json.loads(f.read())
