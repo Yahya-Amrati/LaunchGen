@@ -4,7 +4,7 @@ import json
 from dataclasses import asdict
 from Data_structure import MinecraftLauncher
 # Assuming MinecraftLauncher is in this file
-
+# this was made with chatgpt, but the other files are from me except this one
 class UI:
     def __init__(self) -> None:
         self.root = ttk.Window("LaunchGen", themename="flatly")
