@@ -1,13 +1,28 @@
 import os
 import subprocess
-import minecraft_launcher_lib
-import requests
-from requests.adapters import HTTPAdapter
-import urllib3
+import sys
 import Utils_net as un
 import Data_structure as dts
 from typing import Callable, List
 import multiprocessing
+try:
+    import minecraft_launcher_lib
+    import requests
+    from requests.adapters import HTTPAdapter
+    import urllib3
+except ImportError:
+    try:
+        command = [
+            sys.executable,
+            "-m",
+            "pip",
+            "install",
+            "minecraft_launcher_lib",
+        ]  # pip install minecraft_launcher_lib
+        subprocess.run(command, check=True, text=True)
+    except subprocess.CalledProcessError as e:
+        raise ImportError from e
+
 AUTHLIB_URL = "https://github.com/yushijinhun/authlib-injector/releases/download/v1.2.5/authlib-injector-1.2.5.jar"
 session = requests.Session()
 Retry = urllib3.Retry(total=5, backoff_factor=1, status_forcelist=[500, 502, 503, 504])
@@ -28,6 +43,10 @@ def exception_handler(func) -> Callable:
             un.Error_log.error("the version is not found")
         except minecraft_launcher_lib.exceptions.PlatformNotSupported:
             un.Error_log.error("this Platfrom is not supported")
+        except subprocess.CalledProcessError:
+            un.Error_log.error("error in Process call")
+        except multiprocessing.ProcessError:
+            un.Error_log("Error in creating a run mc process")
     return wrapper
 
 def options_check(options: List[bool]) -> bool:
@@ -58,19 +77,38 @@ def install_mc(version: str, options: List[bool]) -> None:
         raise ValueError("Only one option can be set to True")
     if options[0]:
         process_: Callable = minecraft_launcher_lib.install.install_minecraft_version
-    if options[1]:
+    elif options[1]:
         process_: Callable = minecraft_launcher_lib.fabric.install_fabric
-    if options[2]:
+    elif options[2]:
         version: str = minecraft_launcher_lib.forge.find_forge_version(version)
         process_: Callable = minecraft_launcher_lib.forge.install_forge_version
+    else:
+        process_ = sys.exit()
     un.Info_log.info("Installing %s", version)
     multiprocessing.Process(target=process_, args=(version, dts.MC_PATH)).start()
 
+def check_is_version_installed(version: str) -> bool:
+    return any(i["id"] == version for i in minecraft_launcher_lib.utils.get_installed_versions(dts.MC_PATH))
+
+def check_is_version_valid(version: str) -> (bool, List[bool]):
+    if minecraft_launcher_lib.utils.is_version_valid(version, dts.MC_PATH):
+        return True, [True, False, False]
+    elif minecraft_launcher_lib.forge.is_forge_version_valid(version):
+        return True, [True, False, False]
+    else:
+        return False, [False, False, False]
+        
+@exception_handler
 def run_mc(version: str, username: str) -> None:
-    try:
-        command: List[str] = minecraft_launcher_lib.command.get_minecraft_command(version, dts.MC_PATH, dts.options(username))
-        un.Info_log.info("running minecraft...")
-        subprocess.run(command, check=True)
-    except subprocess.CalledProcessError:
-        un.Error_log.error("error in Process call")
-    
+    return "Todo"
+    # waiting till i finish this
+    if not check_is_version_installed(version):
+        un.Error_log.error("the version here is not installed")
+        check_is_version_valid(version)
+        if check_is_version_valid(version):
+            install_mc()
+    command: List[str] = minecraft_launcher_lib.command.get_minecraft_command(version, dts.MC_PATH, dts.options(username))
+    un.Info_log.info("running minecraft...")
+    sub_proc_inst: Callable = subprocess.run
+    multiprocessing.Process(target=sub_proc_inst, args=command).start()
+

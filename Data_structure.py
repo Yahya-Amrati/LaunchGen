@@ -60,8 +60,6 @@ def generate_random_username() -> str:
         for x in i.split():
             if x not in LEGAL_CHARS:
                 i = i.replace(x, "")
-            else:
-                continue
         name.append(i)
     return "".join(name)
 
@@ -124,6 +122,12 @@ class MinecraftLauncher:
     version_Launcher: str = "1.16.5"
 
 def options(username: str) -> List[str]:
+    new_name: list = []
+    for i in username:
+        if i not in LEGAL_CHARS:
+            i: str = ""
+        new_name.append(i)
+    username: str = "".join(new_name)
     mcutils.install_authlib()
     options: List[str] = {
         # This is needed
