@@ -52,7 +52,7 @@ def fetch_dns() -> List[Dict[str, str]]:
         return default_dns
 
 
-def check_for_wifi() -> bool:
+def check_for_internet() -> bool:
     """
     Check if the device has an internet connection via DNS check's
     """
@@ -80,6 +80,3 @@ def check_for_wifi() -> bool:
     Error_log.error("Failed to connect to any DNS")
     return False
 
-
-if __name__ == "__main__":
-    check_for_wifi()

@@ -4,6 +4,7 @@ import os
 import uuid
 from typing import List
 from dataclasses import dataclass, field
+import Utils_minecraft as mcutils
 
 try:
     import minecraft_launcher_lib
@@ -122,8 +123,7 @@ class MinecraftLauncher:
     crack_supported: bool = True
     Is_version_bound: bool = True
     Version_Launcher: str = "1.16.5"
-    Versions = field(default_factory=list)
-
+    Versions: list = field(default_factory=list)
     def __init__(self) -> None:
         if not self.Is_version_bound:
             if self.is_forge:
@@ -132,3 +132,25 @@ class MinecraftLauncher:
                 self.Versions = [i["version"] for i in minecraft_launcher_lib.fabric.get_all_loader_versions()]
             else:
                 self.Versions = minecraft_launcher_lib.utils.get_version_list()
+
+def options(username: str) -> List[str]:
+    mcutils.install_authlib()
+    options: List[str] = {
+        # This is needed
+        "username": username,
+        "uuid": str(uuid.uuid3(namespace=uuid.NAMESPACE_URL, name=username)),
+        "token": "",
+        # This is optional
+        "executablePath": "java", # The path to the java executable
+        "defaultExecutablePath": "java", # The path to the java executable if the client.json has none
+        "jvmArguments": [f"-javaagent:{os.path.join(MC_PATH, "cache_dir", "auth.jar")}=ely.by"], #The jvmArguments
+        "launcherName": "MyLauncher", # The name of your launcher
+        "launcherVersion": "1.0", # The version of your launcher
+        "demo": False, # Run Minecraft in demo mode
+        "customResolution": False, # Enable custom resolution
+        "resolutionWidth": "854", # The resolution width
+        "resolutionHeight": "480", # The resolution height
+        "enableLoggingConfig": False, # Enable use of the log4j configuration file
+        "disableMultiplayer": False, # Disables the multiplayer
+    }
+    return options
