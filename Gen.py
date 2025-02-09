@@ -26,8 +26,8 @@ def generate_final_product(data: dict) -> None:
     try:
         data = fetch_json("launcher.json")
         copy_necaissary_files(data)
+        Utils_net.Info_log.info("Copying the necaissary files")
     except OSError:
         Utils_net.Error_log.error("path is not a valid path")
     except Exception as e:
         Utils_net.Error_log.error("couldn't finish task due to %s",e)
-    

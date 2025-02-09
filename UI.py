@@ -1,8 +1,11 @@
 import tkinter as tk
 import ttkbootstrap as ttk
 import json
-from dataclasses import asdict
+import Gen
+import Utils_net as un
 from Data_structure import MinecraftLauncher
+import Utils_minecraft
+import atexit
 # Assuming MinecraftLauncher is in this file
 # this was made with chatgpt, but the other files are from me except this one
 class UI:
@@ -47,18 +50,25 @@ class UI:
 
         entry1 = tk.Listbox(self.root, font=("Helvetica", 14), selectmode="single", height=4)
         entry1.insert(1, "Vanilla")
-        entry1.insert(2, "Fabric")
-        entry1.insert(3, "Forge")
+        entry1.insert(2, "Forge")
         entry1.pack(pady=15, ipadx=10, ipady=5)
 
         def switch() -> None:
             index = entry1.curselection()
-            bases = ["Vanilla", "Fabric", "Forge"]
+            print(index)
+            bases = ["Vanilla","Forge"] # 0 IS VANILLA and 1 means forge
             if index:
-                self.Launcher_base = bases[index[0]]
-                self.is_vanilla = (self.Launcher_base == "Vanilla")
-                self.is_fabric = (self.Launcher_base == "Fabric")
-                self.is_forge = (self.Launcher_base == "Forge")
+                for ix, i in enumerate(bases):
+                    print(ix)
+                    if ix == index[0]:
+                        print(i)
+                        var = i
+                        break
+            self.Launcher_base = var
+            print(var)
+            self.is_vanilla = (self.Launcher_base == "Vanilla")
+            self.is_fabric = None
+            self.is_forge = (self.Launcher_base == "Forge")
             self.page3()
 
         ttk.Button(self.root, text="Next", style="info.TButton", command=switch).pack(pady=20)
@@ -75,8 +85,12 @@ class UI:
         entry1.pack(pady=15, ipady=5, ipadx=10)
 
         def switch() -> None:
-            self.Launcher_Version = entry1.get()
-            self.finish_page()
+            if not Utils_minecraft.check_is_version_valid(entry1.get())[0]:
+                un.Error_log.error("the version here is not valid")
+                entry1.configure(state="normal")
+            else:
+                self.Launcher_Version = entry1.get()
+                self.finish_page()
 
         ttk.Button(self.root, text="Next", style="warning.TButton", command=switch).pack(pady=20)
 
@@ -88,7 +102,7 @@ class UI:
         # Create the MinecraftLauncher dataclass instance with all gathered data
         try:
             launcher = MinecraftLauncher(
-                name=self.Launcher_Name,
+                name=f"{self.Launcher_Name.strip().title()}_LAUNCHER",
                 is_forge=self.is_forge,
                 is_fabric=self.is_fabric,
                 is_vanilla=self.is_vanilla,
@@ -99,12 +113,15 @@ class UI:
             return
 
         # Convert the dataclass to a dictionary for easy JSON serialization
-        launcher_data = asdict(launcher)
+        launcher_data = launcher.__dict__
 
+        print(launcher_data)
         # Write the collected data into a JSON file
-        with open("launcher.json", "w") as json_file:
-            json.dump(launcher_data, json_file, indent=4)
-
+        @atexit.register
+        def func() -> None:
+            with open("launcher.json", "w") as json_file:
+                json.dump(launcher_data, json_file, indent=4)
+            Gen.generate_final_product(launcher_data)
         # Display the final gathered information
         ttk.Label(self.root, text="LaunchGen", font=("Helvetica", 30, "bold"), foreground="#4E8CFF").pack(pady=40)
         ttk.Label(self.root, text="Your Launcher Information:", font=("Helvetica", 22, "bold")).pack(pady=20)

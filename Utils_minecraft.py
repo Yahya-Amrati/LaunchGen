@@ -99,14 +99,13 @@ def check_is_version_valid(version: str) -> (bool, List[bool]):
         return False, [False, False, False]
         
 @exception_handler
-def run_mc(version: str, username: str) -> None:
-    return "Todo"
+def run_mc(version: str, username: str, options: List[bool]) -> None:
     # waiting till i finish this
     if not check_is_version_installed(version):
         un.Error_log.error("the version here is not installed")
-        check_is_version_valid(version)
-        if check_is_version_valid(version):
-            install_mc()
+        check, options = check_is_version_valid(version)
+        if check:
+            install_mc(version, options)
     command: List[str] = minecraft_launcher_lib.command.get_minecraft_command(version, dts.MC_PATH, dts.options(username))
     un.Info_log.info("running minecraft...")
     sub_proc_inst: Callable = subprocess.run
