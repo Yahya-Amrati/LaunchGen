@@ -116,22 +116,12 @@ class MinecraftInstances:
 @dataclass
 class MinecraftLauncher:
     name: str
-    path: str = MC_PATH
-    is_forge = False
-    is_fabric = False
-    is_vanilla = True
+    path: str = "DEFAULT"
+    is_forge: bool = False
+    is_fabric: bool = False
+    is_vanilla: bool = True
     crack_supported: bool = True
-    Is_version_bound: bool = True
-    Version_Launcher: str = "1.16.5"
-    Versions: list = field(default_factory=list)
-    def __init__(self) -> None:
-        if not self.Is_version_bound:
-            if self.is_forge:
-                self.Versions = minecraft_launcher_lib.forge.list_forge_versions()
-            elif self.is_fabric:
-                self.Versions = [i["version"] for i in minecraft_launcher_lib.fabric.get_all_loader_versions()]
-            else:
-                self.Versions = minecraft_launcher_lib.utils.get_version_list()
+    version_Launcher: str = "1.16.5"
 
 def options(username: str) -> List[str]:
     mcutils.install_authlib()
