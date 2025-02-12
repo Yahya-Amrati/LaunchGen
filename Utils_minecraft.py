@@ -29,6 +29,17 @@ Retry = urllib3.Retry(total=5, backoff_factor=1, status_forcelist=[500, 502, 503
 session.mount("https://", HTTPAdapter(max_retries=Retry))
 session.mount("http://", HTTPAdapter(max_retries=Retry))
 
+def progress_callback(progress) -> None:
+    print(f"Progress: {progress}%")
+
+def status_callback(status) -> None:
+    print(f"Status: {status}")
+
+callback_dict = {
+    "progress": progress_callback,
+    "status": status_callback
+}
+    
 def exception_handler(func) -> Callable:
     """this is a decorator for handling exceptions"""
     def wrapper(*args, **kwargs) -> None | Exception:
@@ -85,12 +96,12 @@ def install_mc(version: str, options: List[bool]) -> None:
     else:
         process_ = sys.exit()
     un.Info_log.info("Installing %s", version)
-    multiprocessing.Process(target=process_, args=(version, dts.MC_PATH)).start()
+    multiprocessing.Process(target=process_, args=(version, dts.MC_PATH), kwargs={"callback": callback_dict}).start()
 
 def check_is_version_installed(version: str) -> bool:
     return any(i["id"] == version for i in minecraft_launcher_lib.utils.get_installed_versions(dts.MC_PATH))
 
-def check_is_version_valid(version: str) -> (bool, List[bool]):
+def check_is_version_valid(version: str) -> tuple[bool, List[bool]]:
     if minecraft_launcher_lib.utils.is_version_valid(version, dts.MC_PATH):
         return True, [True, False, False]
     elif minecraft_launcher_lib.forge.is_forge_version_valid(version):
@@ -99,15 +110,17 @@ def check_is_version_valid(version: str) -> (bool, List[bool]):
         return False, [False, False, False]
         
 @exception_handler
-def run_mc(version: str, username: str, options: List[bool]) -> None:
+def run_mc(version: str, username: str, name: str, path: str ,options: List[bool]) -> None:
+    if path == "DEFAULT":
+        path = dts.MC_PATH
     # waiting till i finish this
     if not check_is_version_installed(version):
         un.Error_log.error("the version here is not installed")
         check, options = check_is_version_valid(version)
         if check:
             install_mc(version, options)
-    command: List[str] = minecraft_launcher_lib.command.get_minecraft_command(version, dts.MC_PATH, dts.options(username))
+    command: List[str] = minecraft_launcher_lib.command.get_minecraft_command(version, dts.MC_PATH, dts.options(username, name, path))
     un.Info_log.info("running minecraft...")
-    sub_proc_inst: Callable = subprocess.run
+    sub_proc_inst: Callable = subprocess.Popen
     multiprocessing.Process(target=sub_proc_inst, args=command).start()
 

@@ -1,134 +1,99 @@
-import tkinter as tk
-import ttkbootstrap as ttk
-import json
-import Gen
-import Utils_net as un
+import streamlit as st, json, Gen
+# I Hate UI dev so I have to do this using Chatgpt dont blame me :(
 from Data_structure import MinecraftLauncher
 import Utils_minecraft
-import atexit
-# Assuming MinecraftLauncher is in this file
-# this was made with chatgpt, but the other files are from me except this one
-class UI:
-    def __init__(self) -> None:
-        self.root = ttk.Window("LaunchGen", themename="flatly")
-        self.root.geometry("600x600")
-        self.root.resizable(False, False)
-        
-        # Initialize variables that will be set during the pages
-        self.Launcher_Name = ""
-        self.Launcher_Version = ""
-        self.Launcher_base = ""
-        self.is_vanilla = False
-        self.is_fabric = False
-        self.is_forge = False
-        self.crack_supported = False
-        
-        # Start with the first page
-        self.page1()
-        self.root.mainloop()
-
-    def page1(self) -> None:
-        ttk.Label(self.root, text="LaunchGen", font=("Helvetica", 30, "bold"), foreground="#4E8CFF").pack(pady=40)
-        ttk.Label(self.root, text="Input your launcher name", font=("Helvetica", 18)).pack(pady=15)
-        
-        entry1 = ttk.Entry(self.root, font=("Helvetica", 14), justify="center")
-        entry1.pack(pady=15, ipady=5, ipadx=10)
-        
-        def switch() -> None:
-            self.Launcher_Name = entry1.get().title()
-            self.page2()
-
-        ttk.Button(self.root, text="Next", style="success.TButton", command=switch).pack(pady=20)
-
-    def page2(self) -> None:
-        # Clear window content before adding new elements
-        for widget in self.root.winfo_children():
-            widget.destroy()
-        
-        ttk.Label(self.root, text="LaunchGen", font=("Helvetica", 30, "bold"), foreground="#4E8CFF").pack(pady=40)
-        ttk.Label(self.root, text="Choose your launcher base", font=("Helvetica", 18)).pack(pady=15)
-
-        entry1 = tk.Listbox(self.root, font=("Helvetica", 14), selectmode="single", height=4)
-        entry1.insert(1, "Vanilla")
-        entry1.insert(2, "Forge")
-        entry1.pack(pady=15, ipadx=10, ipady=5)
-
-        def switch() -> None:
-            index = entry1.curselection()
-            print(index)
-            bases = ["Vanilla","Forge"] # 0 IS VANILLA and 1 means forge
-            if index:
-                for ix, i in enumerate(bases):
-                    print(ix)
-                    if ix == index[0]:
-                        print(i)
-                        var = i
-                        break
-            self.Launcher_base = var
-            print(var)
-            self.is_vanilla = (self.Launcher_base == "Vanilla")
-            self.is_fabric = None
-            self.is_forge = (self.Launcher_base == "Forge")
-            self.page3()
-
-        ttk.Button(self.root, text="Next", style="info.TButton", command=switch).pack(pady=20)
-
-    def page3(self) -> None:
-        # Clear window content before adding new elements
-        for widget in self.root.winfo_children():
-            widget.destroy()
-        
-        ttk.Label(self.root, text="LaunchGen", font=("Helvetica", 30, "bold"), foreground="#4E8CFF").pack(pady=40)
-        ttk.Label(self.root, text="Enter your launcher MC version", font=("Helvetica", 18)).pack(pady=15)
-        
-        entry1 = ttk.Entry(self.root, font=("Helvetica", 14), justify="center")
-        entry1.pack(pady=15, ipady=5, ipadx=10)
-
-        def switch() -> None:
-            if not Utils_minecraft.check_is_version_valid(entry1.get())[0]:
-                un.Error_log.error("the version here is not valid")
-                entry1.configure(state="normal")
-            else:
-                self.Launcher_Version = entry1.get()
-                self.finish_page()
-
-        ttk.Button(self.root, text="Next", style="warning.TButton", command=switch).pack(pady=20)
-
-    def finish_page(self) -> None:
-        # Clear window content before adding new elements
-        for widget in self.root.winfo_children():
-            widget.destroy()
-
-        # Create the MinecraftLauncher dataclass instance with all gathered data
+if 'page' not in st.session_state: st.session_state.page = 1
+if 'Launcher_Name' not in st.session_state: st.session_state.Launcher_Name = ""
+if 'Launcher_base' not in st.session_state: st.session_state.Launcher_base = ""
+if 'Launcher_Version' not in st.session_state: st.session_state.Launcher_Version = ""
+if 'is_vanilla' not in st.session_state: st.session_state.is_vanilla = False
+if 'is_forge' not in st.session_state: st.session_state.is_forge = False
+if 'is_fabric' not in st.session_state: st.session_state.is_fabric = False
+def C(): a,b,c = st.columns([1,3,1]); return b
+def P1():
+    d = C()
+    with d:
+        st.markdown("<h1 style='text-align:center;color:#333;'>LaunchGen</h1>", unsafe_allow_html=True)
+        st.markdown("<h3 style='text-align:center;color:#555;'>Input your launcher name</h3>", unsafe_allow_html=True)
+        with st.form("f1"):
+            n = st.text_input("Launcher Name", value=st.session_state.Launcher_Name, key="name_input")
+            s = st.form_submit_button("Next")
+            if s:
+                (st.error("Please enter a launcher name.") if n.strip() == "" else None)
+                if n.strip():
+                    st.session_state.Launcher_Name = n.strip().title()
+                    st.session_state.page = 2
+                    st.rerun()
+def P2():
+    d = C()
+    with d:
+        st.markdown("<h1 style='text-align:center;color:#333;'>LaunchGen</h1>", unsafe_allow_html=True)
+        st.markdown("<h3 style='text-align:center;color:#555;'>Choose your launcher base</h3>", unsafe_allow_html=True)
+        with st.form("f2"):
+            b = st.selectbox("Launcher Base", options=["Vanilla", "Forge"], index=0, key="base_select")
+            a1, a2 = st.columns(2)
+            with a1: bs = st.form_submit_button("Back")
+            with a2: ns = st.form_submit_button("Next")
+            if bs:
+                st.session_state.page = 1; st.rerun()
+            elif ns:
+                st.session_state.Launcher_base = b
+                st.session_state.is_vanilla = (b == "Vanilla")
+                st.session_state.is_forge = (b == "Forge")
+                st.session_state.is_fabric = False
+                st.session_state.page = 3; st.rerun()
+def P3():
+    d = C()
+    with d:
+        st.markdown("<h1 style='text-align:center;color:#333;'>LaunchGen</h1>", unsafe_allow_html=True)
+        st.markdown("<h3 style='text-align:center;color:#555;'>Enter your launcher MC version</h3>", unsafe_allow_html=True)
+        with st.form("f3"):
+            v = st.text_input("MC Version", value=st.session_state.Launcher_Version, key="version_input")
+            a1, a2 = st.columns(2)
+            with a1: bs = st.form_submit_button("Back")
+            with a2: ns = st.form_submit_button("Next")
+            if bs:
+                st.session_state.page = 2; st.rerun()
+            elif ns:
+                valid, _ = Utils_minecraft.check_is_version_valid(v)
+                if not valid:
+                    st.error("The version you entered is not valid.")
+                else:
+                    st.session_state.Launcher_Version = v.strip()
+                    st.session_state.page = 4; st.rerun()
+def PF():
+    d = C()
+    with d:
+        st.markdown("<h1 style='text-align:center;color:#333;'>LaunchGen</h1>", unsafe_allow_html=True)
+        st.markdown("<h3 style='text-align:center;color:#555;'>Your Launcher Information</h3>", unsafe_allow_html=True)
         try:
-            launcher = MinecraftLauncher(
-                name=f"{self.Launcher_Name.strip().title()}_LAUNCHER",
-                is_forge=self.is_forge,
-                is_fabric=self.is_fabric,
-                is_vanilla=self.is_vanilla,
-                version_Launcher=self.Launcher_Version
+            L = MinecraftLauncher(
+                name = f"_{st.session_state.Launcher_Name}",
+                is_forge = st.session_state.is_forge,
+                is_fabric = st.session_state.is_fabric,
+                is_vanilla = st.session_state.is_vanilla,
+                version_Launcher = st.session_state.Launcher_Version
             )
         except TypeError as e:
-            print(f"Error while creating MinecraftLauncher: {e}")
+            st.error(f"Error creating launcher data: {e}")
             return
-
-        # Convert the dataclass to a dictionary for easy JSON serialization
-        launcher_data = launcher.__dict__
-
-        print(launcher_data)
-        # Write the collected data into a JSON file
-        @atexit.register
-        def func() -> None:
-            with open("launcher.json", "w") as json_file:
-                json.dump(launcher_data, json_file, indent=4)
-            Gen.generate_final_product(launcher_data)
-        # Display the final gathered information
-        ttk.Label(self.root, text="LaunchGen", font=("Helvetica", 30, "bold"), foreground="#4E8CFF").pack(pady=40)
-        ttk.Label(self.root, text="Your Launcher Information:", font=("Helvetica", 22, "bold")).pack(pady=20)
-
-        ttk.Label(self.root, text=f"Launcher Name: {launcher.name}", font=("Helvetica", 14)).pack(pady=5)
-        ttk.Label(self.root, text=f"Base: {'Vanilla' if launcher.is_vanilla else 'Fabric' if launcher.is_fabric else 'Forge'}", font=("Helvetica", 14)).pack(pady=5)
-        ttk.Label(self.root, text=f"Version: {launcher.version_Launcher}", font=("Helvetica", 14)).pack(pady=5)
-        ttk.Button(self.root, text="Exit", style="danger.TButton", command=self.root.quit).pack(pady=30)
-
-UI()
+        dta = L.__dict__
+        st.json(dta)
+        with st.form("f4"):
+            ex = st.form_submit_button("Exit")
+            if ex:
+                try:
+                    with open("launcher.json", "w") as jf: json.dump(dta, jf, indent=4)
+                    Gen.generate_final_product(dta)
+                    st.success("Data saved and final product generated!")
+                except Exception as e:
+                    st.error(f"An error occurred while saving data: {e}")
+                st.session_state.page = 1; st.rerun()
+if st.session_state.page == 1:
+    P1()
+elif st.session_state.page == 2:
+    P2()
+elif st.session_state.page == 3:
+    P3()
+elif st.session_state.page == 4:
+    PF()

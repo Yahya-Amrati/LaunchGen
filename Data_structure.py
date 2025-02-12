@@ -5,7 +5,7 @@ import uuid
 from typing import List
 from dataclasses import dataclass, field
 import Utils_minecraft as mcutils
-
+import Utils_net as un
 try:
     import minecraft_launcher_lib
 except ImportError:
@@ -77,7 +77,7 @@ class UserMinecraft:
     forge: bool = False
     fabric: bool = False
 
-    def __init__(self):
+    def __post_init__(self):
         # correct values if possible
         new_name: list = []
         for i in self.name:
@@ -116,12 +116,20 @@ class MinecraftLauncher:
     name: str
     path: str = "DEFAULT"
     is_forge: bool = False
-    is_fabric: bool = False
+    is_fabric: None = None
     is_vanilla: bool = True
     crack_supported: bool = True
     version_Launcher: str = "1.16.5"
+    def __post_init__(self) -> None:
+        if self.is_forge:
+            self.is_vanilla = False
+            self.is_fabric = None
+        elif self.is_fabric:
+            un.Error_log.error("fabric is not supported yet")
+        elif self.is_vanilla:
+            self.is_forge = False
 
-def options(username: str) -> List[str]:
+def options(username: str, Name: str, Path: str) -> List[str]:
     new_name: list = []
     for i in username:
         if i not in LEGAL_CHARS:
@@ -135,10 +143,11 @@ def options(username: str) -> List[str]:
         "uuid": str(uuid.uuid3(namespace=uuid.NAMESPACE_URL, name=username)),
         "token": "",
         # This is optional
+        "gameDirectory": Path, # The path to the game directory
         "executablePath": "java", # The path to the java executable
         "defaultExecutablePath": "java", # The path to the java executable if the client.json has none
         "jvmArguments": [f"-javaagent:{os.path.join(MC_PATH, "cache_dir", "auth.jar")}=ely.by"], #The jvmArguments
-        "launcherName": "MyLauncher", # The name of your launcher
+        "launcherName": Name, # The name of your launcher
         "launcherVersion": "1.0", # The version of your launcher
         "demo": False, # Run Minecraft in demo mode
         "customResolution": False, # Enable custom resolution

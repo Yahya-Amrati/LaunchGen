@@ -1,13 +1,7 @@
-import json
 import os
 import Data_structure
 import Utils_net
 import shutil
-
-def fetch_json(path: str) -> dict:
-    with open(path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-    return data
 
 def copy_necaissary_files(data: dict) -> None:
     if data["path"] == "DEFAULT":
@@ -24,7 +18,6 @@ def copy_necaissary_files(data: dict) -> None:
     
 def generate_final_product(data: dict) -> None:
     try:
-        data = fetch_json("launcher.json")
         copy_necaissary_files(data)
         Utils_net.Info_log.info("Copying the necaissary files")
     except OSError:
