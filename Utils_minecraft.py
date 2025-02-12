@@ -1,7 +1,6 @@
 import os
 import subprocess
 import sys
-from threading import local
 import Utils_net as un
 import Data_structure as dts
 from typing import Callable, List
@@ -114,15 +113,19 @@ def running_forge_version(version: str) -> str:
 
 @exception_handler
 def run_mc(version: str, username: str, name: str, path: str ,options: List[bool]) -> None:
-    if path == "DEFAULT": path = dts.MC_PATH
-    elif path == "LOCAL": path = LocalPath()
+    if path == "DEFAULT":
+        path = dts.MC_PATH
+    elif path == "LOCAL":
+        path = LocalPath()
     # waiting till i finish this
     if not check_is_version_installed(version, options):
         un.Error_log.error("the version here is not installed")
         if check_is_version_valid(version):
             install_mc(version, options)
-    if options[2]: version = running_forge_version(version)
-    command: List[str] = minecraft_launcher_lib.command.get_minecraft_command(version, dts.MC_PATH, dts.options(username, name, path)); un.Info_log.info("running minecraft...")
+    if options[2]:
+        version = running_forge_version(version)
+    command: List[str] = minecraft_launcher_lib.command.get_minecraft_command(version, dts.MC_PATH, dts.options(username, name, path))
+    un.Info_log.info("running minecraft...")
     sub_proc_inst: Callable = subprocess.Popen
     multiprocessing.Process(target=sub_proc_inst, kwargs={"args":command}).start()
 
