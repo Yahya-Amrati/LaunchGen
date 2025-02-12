@@ -1,4 +1,9 @@
-import streamlit as st, json, Gen
+import json
+import Gen
+try:
+    import streamlit as st
+except ModuleNotFoundError:
+    raise ModuleNotFoundError("streamlit not installed, please do pip install streamlit")
 # I Hate UI dev so I have to do this using Chatgpt dont blame me :(
 from Data_structure import MinecraftLauncher
 import Utils_minecraft

@@ -115,8 +115,7 @@ def check_is_version_valid(version: str) -> tuple[bool, List[bool]]:
         
 @exception_handler
 def run_mc(version: str, username: str, name: str, path: str ,options: List[bool]) -> None:
-    if path == "DEFAULT":
-        path = dts.MC_PATH
+    if path == "DEFAULT": path = dts.MC_PATH
     # waiting till i finish this
     if not check_is_version_installed(version, options):
         un.Error_log.error("the version here is not installed")
@@ -129,8 +128,7 @@ def run_mc(version: str, username: str, name: str, path: str ,options: List[bool
         version = version.split("-")
         version = f"{version[0]}-forge-{version[1]}"
 
-    command: List[str] = minecraft_launcher_lib.command.get_minecraft_command(version, dts.MC_PATH, dts.options(username, name, path))
-    un.Info_log.info("running minecraft...")
+    command: List[str] = minecraft_launcher_lib.command.get_minecraft_command(version, dts.MC_PATH, dts.options(username, name, path)); un.Info_log.info("running minecraft...")
     sub_proc_inst: Callable = subprocess.Popen
     multiprocessing.Process(target=sub_proc_inst, kwargs={"args":command}).start()
 
