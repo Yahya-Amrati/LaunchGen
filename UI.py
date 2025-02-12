@@ -15,14 +15,22 @@ hide_streamlit_style = """
         [data-testid="stToolbar"] {display: none !important;}
     </style>
 """
-st.set_page_config(layout="wide", page_title="LaunchGen", page_icon="😁"); st.markdown(hide_streamlit_style, unsafe_allow_html=True)
-if 'page' not in st.session_state: st.session_state.page = 1
-if 'Launcher_Name' not in st.session_state: st.session_state.Launcher_Name = ""
-if 'Launcher_base' not in st.session_state: st.session_state.Launcher_base = ""
-if 'Launcher_Version' not in st.session_state: st.session_state.Launcher_Version = ""
-if 'is_vanilla' not in st.session_state: st.session_state.is_vanilla = False
-if 'is_forge' not in st.session_state: st.session_state.is_forge = False
-if 'is_fabric' not in st.session_state: st.session_state.is_fabric = False
+st.set_page_config(layout="wide", page_title="LaunchGen", page_icon="😁")
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+if 'page' not in st.session_state: 
+    st.session_state.page = 1
+if 'Launcher_Name' not in st.session_state: 
+    st.session_state.Launcher_Name = ""
+if 'Launcher_base' not in st.session_state: 
+    st.session_state.Launcher_base = ""
+if 'Launcher_Version' not in st.session_state: 
+    st.session_state.Launcher_Version = ""
+if 'is_vanilla' not in st.session_state: 
+    st.session_state.is_vanilla = False
+if 'is_forge' not in st.session_state: 
+    st.session_state.is_forge = False
+if 'is_fabric' not in st.session_state: 
+    st.session_state.is_fabric = False
 
 def C(): a,b,c = st.columns([1,3,1]); return b
 def P1():
@@ -47,8 +55,10 @@ def P2():
         with st.form("f2"):
             b = st.selectbox("Launcher Base", options=["Vanilla", "Forge"], index=0, key="base_select")
             a1, a2 = st.columns(2)
-            with a1: bs = st.form_submit_button("Back")
-            with a2: ns = st.form_submit_button("Next")
+            with a1: 
+                bs = st.form_submit_button("Back")
+            with a2: 
+                ns = st.form_submit_button("Next")
             if bs:
                 st.session_state.page = 1; st.rerun()
             elif ns:

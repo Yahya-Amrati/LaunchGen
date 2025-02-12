@@ -6,7 +6,6 @@ import Utils_minecraft
 import Utils_net
 import shutil
 import sys
-
 necessities: List[str] = ["launcher.json", "dns.json"]
 
 def make_launcher(data: dict) -> None:
