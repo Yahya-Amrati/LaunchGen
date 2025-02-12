@@ -1,6 +1,7 @@
 import os
 import subprocess
 import sys
+from threading import local
 import Utils_net as un
 import Data_structure as dts
 from typing import Callable, List
@@ -28,17 +29,6 @@ session = requests.Session()
 Retry = urllib3.Retry(total=5, backoff_factor=1, status_forcelist=[500, 502, 503, 504])
 session.mount("https://", HTTPAdapter(max_retries=Retry))
 session.mount("http://", HTTPAdapter(max_retries=Retry))
-
-def progress_callback(progress) -> None:
-    print(f"Progress: {progress}%")
-
-def status_callback(status) -> None:
-    print(f"Status: {status}")
-
-callback_dict = {
-    "progress": progress_callback,
-    "status": status_callback
-}
     
 def exception_handler(func) -> Callable:
     """this is a decorator for handling exceptions"""
@@ -59,6 +49,10 @@ def exception_handler(func) -> Callable:
         except multiprocessing.ProcessError:
             un.Error_log("Error in creating a run mc process")
     return wrapper
+
+def LocalPath() -> str:
+    local_path: str = str(os.path.dirname(os.path.realpath(globals()["__file__"])))
+    return local_path or os.getcwd()
 
 def options_check(options: List[bool]) -> bool:
     """checks if only one var in option is set to True"""
@@ -94,9 +88,9 @@ def install_mc(version: str, options: List[bool]) -> None:
         version: str = minecraft_launcher_lib.forge.find_forge_version(version)
         process_: Callable = minecraft_launcher_lib.forge.install_forge_version
     else:
-        process_ = sys.exit()
+        process_ = sys.exit
     un.Info_log.info("Installing %s", version)
-    proc = multiprocessing.Process(target=process_, args=(version, dts.MC_PATH), kwargs={"callback": callback_dict})
+    proc = multiprocessing.Process(target=process_, args=(version, dts.MC_PATH))
     proc.start()
     proc.join()
 
@@ -112,22 +106,22 @@ def check_is_version_installed(version: str, options: List[bool]) -> bool:
 def check_is_version_valid(version: str) -> tuple[bool, List[bool]]:
     if minecraft_launcher_lib.utils.is_version_valid(version, dts.MC_PATH):
         return True
-        
+def running_forge_version(version: str) -> str:
+    version = minecraft_launcher_lib.forge.find_forge_version(version)
+    version = version.split("-")
+    version = f"{version[0]}-forge-{version[1]}"
+    return version
+
 @exception_handler
 def run_mc(version: str, username: str, name: str, path: str ,options: List[bool]) -> None:
     if path == "DEFAULT": path = dts.MC_PATH
+    elif path == "LOCAL": path = LocalPath()
     # waiting till i finish this
     if not check_is_version_installed(version, options):
         un.Error_log.error("the version here is not installed")
         if check_is_version_valid(version):
             install_mc(version, options)
-
-    if options[2]:
-        # not working with fabric yet
-        version = minecraft_launcher_lib.forge.find_forge_version(version)
-        version = version.split("-")
-        version = f"{version[0]}-forge-{version[1]}"
-
+    if options[2]: version = running_forge_version(version)
     command: List[str] = minecraft_launcher_lib.command.get_minecraft_command(version, dts.MC_PATH, dts.options(username, name, path)); un.Info_log.info("running minecraft...")
     sub_proc_inst: Callable = subprocess.Popen
     multiprocessing.Process(target=sub_proc_inst, kwargs={"args":command}).start()
