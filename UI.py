@@ -9,6 +9,7 @@ if 'Launcher_Version' not in st.session_state: st.session_state.Launcher_Version
 if 'is_vanilla' not in st.session_state: st.session_state.is_vanilla = False
 if 'is_forge' not in st.session_state: st.session_state.is_forge = False
 if 'is_fabric' not in st.session_state: st.session_state.is_fabric = False
+st.set_page_config(layout="wide", page_title="LaunchGen", page_icon="😁")
 def C(): a,b,c = st.columns([1,3,1]); return b
 def P1():
     d = C()
@@ -55,8 +56,7 @@ def P3():
             if bs:
                 st.session_state.page = 2; st.rerun()
             elif ns:
-                valid, _ = Utils_minecraft.check_is_version_valid(v)
-                if not valid:
+                if not Utils_minecraft.check_is_version_valid(v):
                     st.error("The version you entered is not valid.")
                 else:
                     st.session_state.Launcher_Version = v.strip()

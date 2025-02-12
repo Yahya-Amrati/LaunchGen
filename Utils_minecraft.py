@@ -96,31 +96,41 @@ def install_mc(version: str, options: List[bool]) -> None:
     else:
         process_ = sys.exit()
     un.Info_log.info("Installing %s", version)
-    multiprocessing.Process(target=process_, args=(version, dts.MC_PATH), kwargs={"callback": callback_dict}).start()
+    proc = multiprocessing.Process(target=process_, args=(version, dts.MC_PATH), kwargs={"callback": callback_dict})
+    proc.start()
+    proc.join()
 
-def check_is_version_installed(version: str) -> bool:
+def check_is_version_installed(version: str, options: List[bool]) -> bool:
+    if options[1]:
+        return False
+    if options[2]:
+        version = minecraft_launcher_lib.forge.find_forge_version(version)
+        version = version.split("-")
+        version = f"{version[0]}-forge-{version[1]}"
     return any(i["id"] == version for i in minecraft_launcher_lib.utils.get_installed_versions(dts.MC_PATH))
 
 def check_is_version_valid(version: str) -> tuple[bool, List[bool]]:
     if minecraft_launcher_lib.utils.is_version_valid(version, dts.MC_PATH):
-        return True, [True, False, False]
-    elif minecraft_launcher_lib.forge.is_forge_version_valid(version):
-        return True, [True, False, False]
-    else:
-        return False, [False, False, False]
+        return True
         
 @exception_handler
 def run_mc(version: str, username: str, name: str, path: str ,options: List[bool]) -> None:
     if path == "DEFAULT":
         path = dts.MC_PATH
     # waiting till i finish this
-    if not check_is_version_installed(version):
+    if not check_is_version_installed(version, options):
         un.Error_log.error("the version here is not installed")
-        check, options = check_is_version_valid(version)
-        if check:
+        if check_is_version_valid(version):
             install_mc(version, options)
+
+    if options[2]:
+        # not working with fabric yet
+        version = minecraft_launcher_lib.forge.find_forge_version(version)
+        version = version.split("-")
+        version = f"{version[0]}-forge-{version[1]}"
+
     command: List[str] = minecraft_launcher_lib.command.get_minecraft_command(version, dts.MC_PATH, dts.options(username, name, path))
     un.Info_log.info("running minecraft...")
     sub_proc_inst: Callable = subprocess.Popen
-    multiprocessing.Process(target=sub_proc_inst, args=command).start()
+    multiprocessing.Process(target=sub_proc_inst, kwargs={"args":command}).start()
 
