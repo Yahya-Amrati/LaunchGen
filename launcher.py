@@ -25,12 +25,14 @@ def fetch_json() -> dict:
         return {}
 
 class LauncherUI:
-    def __init__(self, master):
+    def __init__(self, master) -> None:
+        self.data = fetch_json()
         self.master = master
-        master.title("Minecraft Launcher")
+        name: str = self.data["name"]
+        name = name.removeprefix("_") or "Minecraft"
+        master.title(f"{name} Launcher")
 
         # Load configuration from JSON.
-        self.data = fetch_json()
         if not self.data:
             messagebox.showerror("Error", "Failed to load launcher.json. Please check the file and try again.")
             master.destroy()
