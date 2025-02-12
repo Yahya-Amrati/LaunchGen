@@ -98,8 +98,8 @@ def PF():
             if ex:
                 try:
                     with open("launcher.json", "w") as jf: json.dump(dta, jf, indent=4)
+                    st.warning("Wait compiling launcher")
                     Gen.generate_final_product(dta)
-                    st.success("Data saved and final product generated!")
                 except Exception as e:
                     st.error(f"An error occurred while saving data: {e}")
                 st.session_state.page = 1; st.rerun()

@@ -18,3 +18,12 @@ __pycache__/dts_.cpython-313.pyc
 authlib-injector.log
 launcher.json
 __pycache__/Gen.cpython-313.pyc
+build/Launcher/Analysis-00.toc
+.gitignore
+Launcher.spec
+build/Launcher/EXE-00.toc
+.gitignore
+.gitignore
+.gitignore
+build/Launcher/PYZ-00.toc
+build/Launcher/localpycs/struct.pyc
