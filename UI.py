@@ -7,6 +7,15 @@ except ModuleNotFoundError:
 # I Hate UI dev so I have to do this using Chatgpt dont blame me :(
 from Data_structure import MinecraftLauncher
 import Utils_minecraft
+hide_streamlit_style = """
+    <style>
+        #MainMenu {visibility: hidden;}
+        header {visibility: hidden;}
+        footer {visibility: hidden;}
+        [data-testid="stToolbar"] {display: none !important;}
+    </style>
+"""
+st.set_page_config(layout="wide", page_title="LaunchGen", page_icon="😁"); st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 if 'page' not in st.session_state: st.session_state.page = 1
 if 'Launcher_Name' not in st.session_state: st.session_state.Launcher_Name = ""
 if 'Launcher_base' not in st.session_state: st.session_state.Launcher_base = ""
@@ -14,7 +23,7 @@ if 'Launcher_Version' not in st.session_state: st.session_state.Launcher_Version
 if 'is_vanilla' not in st.session_state: st.session_state.is_vanilla = False
 if 'is_forge' not in st.session_state: st.session_state.is_forge = False
 if 'is_fabric' not in st.session_state: st.session_state.is_fabric = False
-st.set_page_config(layout="wide", page_title="LaunchGen", page_icon="😁")
+
 def C(): a,b,c = st.columns([1,3,1]); return b
 def P1():
     d = C()
