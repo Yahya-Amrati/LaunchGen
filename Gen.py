@@ -6,7 +6,7 @@ import Utils_minecraft
 import Utils_net
 import shutil
 import sys
-necessities: List[str] = ["launcher.json", "dns.json"]
+necessities: List[str] = ["launcher.json", "dns.json", "launcher.json"]
 def make_launcher(data: dict) -> None:
     try:
         if data["path"] == "DEFAULT":
