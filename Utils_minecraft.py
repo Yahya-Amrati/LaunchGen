@@ -11,7 +11,7 @@ import requests
 from requests.adapters import HTTPAdapter
 import urllib3
 
-AUTHLIB_URL = "https://github.com/yushijinhun/authlib-injector/releases/download/v1.2.5/authlib-injector-1.2.5.jar"
+AUTHLIB_INJECTOR_URL = "https://github.com/yushijinhun/authlib-injector/releases/download/v1.2.5/authlib-injector-1.2.5.jar"
 session = requests.Session()
 Retry = urllib3.Retry(total=5, backoff_factor=1, status_forcelist=[500, 502, 503, 504])
 session.mount("https://", HTTPAdapter(max_retries=Retry))
@@ -20,11 +20,11 @@ session.mount("http://", HTTPAdapter(max_retries=Retry))
 def exception_handler(func) -> Callable:
     """this is a decorator for handling exceptions"""
     def wrapper(*args, **kwargs) -> None | Exception:
-        try:        
+        try:    
             if not un.check_for_internet():
                 un.Error_log.error("No internet connection")
                 return
-            func(*args, **kwargs)
+            return func(*args, **kwargs)
         except minecraft_launcher_lib.exceptions.UnsupportedVersion:
             un.Error_log.error("the version is not supported")
         except minecraft_launcher_lib.exceptions.VersionNotFound:
@@ -34,16 +34,16 @@ def exception_handler(func) -> Callable:
         except subprocess.CalledProcessError:
             un.Error_log.error("error in Process call")
         except multiprocessing.ProcessError:
-            un.Error_log("Error in creating a run mc process")
+            un.Error_log.error("Error in creating a run mc process")
     return wrapper
 
 def LocalPath() -> str:
-    local_path: str = str(os.path.dirname(os.path.realpath(globals()["__file__"])))
-    return local_path or os.getcwd()
+    """this is a function for getting the local path"""
+    return os.path.dirname(os.path.realpath(globals()["__file__"])) or os.getcwd()
 
 def options_check(options: List[bool]) -> bool:
     """checks if only one var in option is set to True"""
-    return sum(i for i in options if i) > 1
+    return sum(options) == 1
 
 def install_authlib() -> None:
     """this is a function for installing authlib"""
@@ -54,7 +54,7 @@ def install_authlib() -> None:
         un.Info_log.info("Installing authlib")
         os.makedirs(os.path.join(dts.MC_PATH, "cache_dir"), exist_ok=True)
         with open(os.path.join(dts.MC_PATH, "cache_dir", "auth.jar"), "wb") as f:
-            f.write(session.get(AUTHLIB_URL).content)
+            f.write(session.get(AUTHLIB_INJECTOR_URL).content)
     except OSError:
         un.Error_log.error("we had a oserror while downloading auth.jar")
     except Exception as e:
@@ -75,7 +75,9 @@ def install_mc(version: str, options: List[bool]) -> None:
         version: str = minecraft_launcher_lib.forge.find_forge_version(version)
         process_: Callable = minecraft_launcher_lib.forge.install_forge_version
     else:
-        process_ = sys.exit
+        def process_() -> Exception:
+            raise ValueError("No option is set to True")
+
     un.Info_log.info("Installing %s", version)
     proc = multiprocessing.Process(target=process_, args=(version, dts.MC_PATH))
     proc.start()
@@ -91,10 +93,10 @@ def check_is_version_installed(version: str, options: List[bool]) -> bool:
         version = f"{version[0]}-forge-{version[1]}"
     return any(i["id"] == version for i in minecraft_launcher_lib.utils.get_installed_versions(dts.MC_PATH))
 
-def check_is_version_valid(version: str) -> tuple[bool, List[bool]]:
+def check_is_version_valid(version: str) -> bool:
     """this is a function for checking if a minecraft version is valid"""
-    if minecraft_launcher_lib.utils.is_version_valid(version, dts.MC_PATH):
-        return True
+    return minecraft_launcher_lib.utils.is_version_valid(version, dts.MC_PATH)
+
 def running_forge_version(version: str) -> str:
     """this is a function for turning vanilla version to forge version"""
     version = minecraft_launcher_lib.forge.find_forge_version(version)
@@ -116,7 +118,10 @@ def run_mc(version: str, username: str, name: str, path: str ,options: List[bool
             install_mc(version, options)
     if options[2]:
         version = running_forge_version(version)
-    command: List[str] = minecraft_launcher_lib.command.get_minecraft_command(version, dts.MC_PATH, dts.options(username, name, path))
+    command: List[str] = minecraft_launcher_lib.command.get_minecraft_command(version, dts.MC_PATH,
+                                                                              dts.options(username, name, path))
     un.Info_log.info("running minecraft...")
     sub_proc_inst: Callable = subprocess.Popen
-    multiprocessing.Process(target=sub_proc_inst, kwargs={"args":command}).start()
+    mainproc = sub_proc_inst(command)
+    mainproc.wait()
+
