@@ -1,3 +1,4 @@
+import dependecies ; dependecies.check()  # noqa: E702
 import os
 import subprocess
 import sys
@@ -5,23 +6,10 @@ import Utils_net as un
 import Data_structure as dts
 from typing import Callable, List
 import multiprocessing
-try:
-    import minecraft_launcher_lib
-    import requests
-    from requests.adapters import HTTPAdapter
-    import urllib3
-except ImportError:
-    try:
-        command = [
-            sys.executable,
-            "-m",
-            "pip",
-            "install",
-            "minecraft_launcher_lib",
-        ]  # pip install minecraft_launcher_lib
-        subprocess.run(command, check=True, text=True)
-    except subprocess.CalledProcessError as e:
-        raise ImportError from e
+import minecraft_launcher_lib
+import requests
+from requests.adapters import HTTPAdapter
+import urllib3
 
 AUTHLIB_URL = "https://github.com/yushijinhun/authlib-injector/releases/download/v1.2.5/authlib-injector-1.2.5.jar"
 session = requests.Session()
@@ -94,6 +82,7 @@ def install_mc(version: str, options: List[bool]) -> None:
     proc.join()
 
 def check_is_version_installed(version: str, options: List[bool]) -> bool:
+    """this is a function for checking if a version is installed"""
     if options[1]:
         return False
     if options[2]:
@@ -103,9 +92,11 @@ def check_is_version_installed(version: str, options: List[bool]) -> bool:
     return any(i["id"] == version for i in minecraft_launcher_lib.utils.get_installed_versions(dts.MC_PATH))
 
 def check_is_version_valid(version: str) -> tuple[bool, List[bool]]:
+    """this is a function for checking if a minecraft version is valid"""
     if minecraft_launcher_lib.utils.is_version_valid(version, dts.MC_PATH):
         return True
 def running_forge_version(version: str) -> str:
+    """this is a function for turning vanilla version to forge version"""
     version = minecraft_launcher_lib.forge.find_forge_version(version)
     version = version.split("-")
     version = f"{version[0]}-forge-{version[1]}"
@@ -113,6 +104,7 @@ def running_forge_version(version: str) -> str:
 
 @exception_handler
 def run_mc(version: str, username: str, name: str, path: str ,options: List[bool]) -> None:
+    """this is a function for running a minecraft version"""
     if path == "DEFAULT":
         path = dts.MC_PATH
     elif path == "LOCAL":
@@ -128,4 +120,3 @@ def run_mc(version: str, username: str, name: str, path: str ,options: List[bool
     un.Info_log.info("running minecraft...")
     sub_proc_inst: Callable = subprocess.Popen
     multiprocessing.Process(target=sub_proc_inst, kwargs={"args":command}).start()
-

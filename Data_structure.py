@@ -1,26 +1,12 @@
+import dependecies ; dependecies.check()  # noqa: E702
 import sys
-import subprocess
 import os
 import uuid
 from typing import List
 from dataclasses import dataclass, field
 import Utils_minecraft as mcutils
 import Utils_net as un
-try:
-    import minecraft_launcher_lib
-except ImportError:
-    try:
-        command = [
-            sys.executable,
-            "-m",
-            "pip",
-            "install",
-            "minecraft_launcher_lib",
-        ]  # pip install minecraft_launcher_lib
-        subprocess.run(command, check=True, text=True)
-    except subprocess.CalledProcessError as e:
-        raise ImportError from e
-
+import minecraft_launcher_lib
 # cette Partie à été coder entierment par Yahya Amrati
 # 05/02/2025
 

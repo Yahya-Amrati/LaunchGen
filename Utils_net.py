@@ -1,3 +1,4 @@
+import dependecies ; dependecies.check()  # noqa: E702
 import json
 import logging
 from typing import List, Dict
@@ -79,4 +80,3 @@ def check_for_internet() -> bool:
         backoff *= 2
     Error_log.error("Failed to connect to any DNS")
     return False
-
