@@ -1,11 +1,10 @@
-import dependecies ; dependecies.check()  # noqa: E702
 import json
 import Gen
 import streamlit as st
 from Data_structure import MinecraftLauncher
 import Utils_minecraft
 
-# Hide Streamlit default UI elements
+
 hide_streamlit_style = """
     <style>
         #MainMenu {visibility: hidden;}

@@ -1,4 +1,4 @@
-import dependecies ; dependecies.check()  # noqa: E702
+
 import json
 import logging
 from typing import List, Dict

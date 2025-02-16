@@ -1,4 +1,4 @@
-import dependecies ; dependecies.check()  # noqa: E702
+
 import sys
 import os
 import uuid
@@ -7,8 +7,9 @@ from dataclasses import dataclass, field
 import Utils_minecraft as mcutils
 import Utils_net as un
 import minecraft_launcher_lib
-# cette Partie à été coder entierment par Yahya Amrati
+
 # 05/02/2025
+# 16/02/2025
 
 LEGAL_CHARS: set = set(
     """abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"""
@@ -80,7 +81,7 @@ class UserMinecraft:
         elif self.fabric:
             self.vanilla = False
             self.forge = False
-        self.uuid = str(uuid.uuid3(uuid.RESERVED_MICROSOFT, self.name))
+        self.uuid = str(uuid.uuid3(uuid.NAMESPACE_URL, self.name))
 
 
 @dataclass
@@ -115,7 +116,7 @@ class MinecraftLauncher:
         elif self.is_vanilla:
             self.is_forge = False
 
-def options(username: str, Name: str, Path: str) -> List[str]:
+def options(username: str, name: str, path: str):
     new_name: list = []
     for i in username:
         if i not in LEGAL_CHARS:
@@ -123,23 +124,23 @@ def options(username: str, Name: str, Path: str) -> List[str]:
         new_name.append(i)
     username: str = "".join(new_name)
     mcutils.install_authlib()
-    options: List[str] = {
-        # This is needed
+    return {
         "username": username,
         "uuid": str(uuid.uuid3(namespace=uuid.NAMESPACE_URL, name=username)),
         "token": "",
-        # This is optional
-        "gameDirectory": Path, # The path to the game directory
-        "executablePath": "java", # The path to the java executable
-        "defaultExecutablePath": "java", # The path to the java executable if the client.json has none
-        "jvmArguments": [f"-javaagent:{os.path.join(MC_PATH, "cache_dir", "auth.jar")}=ely.by"], #The jvmArguments
-        "launcherName": Name, # The name of your launcher
-        "launcherVersion": "1.0", # The version of your launcher
-        "demo": False, # Run Minecraft in demo mode
-        "customResolution": False, # Enable custom resolution
-        "resolutionWidth": "854", # The resolution width
-        "resolutionHeight": "480", # The resolution height
-        "enableLoggingConfig": False, # Enable use of the log4j configuration file
-        "disableMultiplayer": False, # Disables the multiplayer
+        "gameDirectory": path,
+        "executablePath": f"{minecraft_launcher_lib.utils.get_java_executable()}",
+        "defaultExecutablePath": "java",
+        "jvmArguments": [
+            f"-javaagent:{os.path.join(MC_PATH, "cache_dir", "auth.jar")}=ely.by"
+        ],
+        "launcherName": name,
+        "launcherVersion": "1.0",
+        "demo": False,
+        "customResolution": False,
+        "resolutionWidth": "854",
+        "resolutionHeight": "480",
+        "enableLoggingConfig": False,
+        "disableMultiplayer": False,
     }
-    return options
+

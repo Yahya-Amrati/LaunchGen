@@ -1,4 +1,3 @@
-import dependecies ; dependecies.check()  # noqa: E702
 import json
 import customtkinter as ctk
 from tkinter import messagebox
@@ -7,9 +6,9 @@ import Data_structure
 import Utils_minecraft
 import Utils_net as un
 
-# Set the appearance mode and theme for CustomTkinter.
-ctk.set_appearance_mode("dark")  # Options: "system", "dark", "light"
-ctk.set_default_color_theme("blue")  # You can change the theme as desired.
+
+ctk.set_appearance_mode("system")
+ctk.set_default_color_theme("blue")
 
 
 def fetch_json() -> dict:
@@ -29,7 +28,9 @@ def fetch_json() -> dict:
     except UnicodeTranslateError:
         un.Error_log.error("launcher.json has not a valid encoding type")
         return {}
-
+    except Exception as e:
+        un.Error_log.error("Couldn't finish task due to %s", e)
+        return {}
 
 class LauncherUI:
     def __init__(self, master) -> None:
@@ -143,7 +144,7 @@ class LauncherUI:
 
         # Assuming Data_structure.LEGAL_CHARS is a set/list of characters that are not allowed.
         for char in username:
-            if char in Data_structure.LEGAL_CHARS:
+            if char not in Data_structure.LEGAL_CHARS:
                 messagebox.showwarning(
                     "Invalid Username", "Username contains invalid characters."
                 )
@@ -169,12 +170,12 @@ class LauncherUI:
             Utils_minecraft.run_mc(
                 self.data.get("version_Launcher"),
                 username,
-                self.data.get("version_Launcher"),
+                self.data.get("name"),
                 self.data.get("path"),
                 [
                     self.data.get("is_vanilla"),
-                    self.data.get("is_fabric"),
-                    self.data.get("is_forge"),
+                    False,  # Fabric is not supported yet
+                    self.data.get("is_forge")
                 ],
             )
             self.status_label.configure(
@@ -191,7 +192,6 @@ def main():
     root.geometry("400x350")  # Set a reasonable window size.
     app = LauncherUI(root)
     root.mainloop()
-
 
 if __name__ == "__main__":
     freeze_support()

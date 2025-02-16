@@ -1,7 +1,11 @@
 import subprocess
 import sys
-# this for dependecies check
-libs = ["minecraft_launcher_lib",
+from typing import List
+
+# this for dependencies check
+
+libs: List[str] = [
+        "minecraft_launcher_lib",
         "customtkinter",
         "streamlit",
         "requests",
@@ -10,12 +14,12 @@ libs = ["minecraft_launcher_lib",
         ]
 
 def install():
-    """install dependecies"""
+    """install dependencies"""
     command = [sys.executable, "-m", "pip", "install", "-r", "requirements.txt"]
     subprocess.run(command, check=True, text=True)
 
 def check():
-    """check if dependecies are installed"""
+    """check if dependencies are installed"""
     for lib in libs:
         try:
             __import__(lib)
