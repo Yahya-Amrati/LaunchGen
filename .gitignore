@@ -27,3 +27,9 @@ build/Launcher/EXE-00.toc
 .gitignore
 build/Launcher/PYZ-00.toc
 build/Launcher/localpycs/struct.pyc
+.idea/LaunchGen.iml
+.idea/misc.xml
+.idea/vcs.xml
+__pycache__/dependecies.cpython-313.pyc
+.idea/modules.xml
+.idea/inspectionProfiles/profiles_settings.xml

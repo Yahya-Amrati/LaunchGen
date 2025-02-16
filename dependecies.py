@@ -15,6 +15,7 @@ libs: List[str] = [
 
 def install():
     """install dependencies"""
+    print("Installing dependencies...")
     command = [sys.executable, "-m", "pip", "install", "-r", "requirements.txt"]
     subprocess.run(command, check=True, text=True)
 

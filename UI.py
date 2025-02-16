@@ -13,6 +13,7 @@ hide_streamlit_style = """
         [data-testid="stToolbar"] {display: none !important;}
     </style>
 """
+
 st.set_page_config(layout="wide", page_title="LaunchGen", page_icon="😁")
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
