@@ -1,0 +1,14 @@
+{
+  "latest": {
+    "version": "1.0.0",
+    "urls":{
+      "UI.py":"",
+      "Utils_minecraft":"",
+      "Utils_net":"",
+      "Data_structure":"",
+      "Gen.py":"",
+      "launcher.py":"",
+      "run.py":""
+    }
+  }
+}
