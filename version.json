@@ -25,7 +25,7 @@
       "description": "Dataclasses for Minecraft server configurations and world structures"
     },
     "Utils_net.py": {
-      "url": "hhttps://raw.githubusercontent.com/Yahya-Amrati/LaunchGen/refs/heads/Utils_net.py",
+      "url": "https://raw.githubusercontent.com/Yahya-Amrati/LaunchGen/refs/heads/Utils_net.py",
       "description": "Network utilities for server ping and status checking"
     },
     "launcher.py": {
