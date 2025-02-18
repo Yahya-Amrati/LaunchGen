@@ -1,0 +1,36 @@
+{
+  "latest": {
+    "UI.py": {
+      "url": "https://example.com/versions/latest/UI.py",
+      "description": "Main application window and GUI components using Tkinter"
+    },
+    "downloads.py": {
+      "url": "https://example.com/versions/latest/downloads.py",
+      "description": "Download management system with queue and progress tracking"
+    },
+    "Utils_minecraft.py": {
+      "url": "https://example.com/versions/latest/Utils_minecraft.py",
+      "description": "Minecraft-specific path handling and version validation utilities"
+    },
+    "dependencies.py": {
+      "url": "https://example.com/versions/latest/dependencies.py",
+      "description": "Package dependency management and installation system"
+    },
+    "Gen.py": {
+      "url": "https://example.com/versions/latest/Gen.py",
+      "description": "World generation algorithms and structure creation utilities"
+    },
+    "Data_structure.py": {
+      "url": "https://example.com/versions/latest/Data_structure.py",
+      "description": "Dataclasses for Minecraft server configurations and world structures"
+    },
+    "Utils_net.py": {
+      "url": "https://example.com/versions/latest/Utils_net.py",
+      "description": "Network utilities for server ping and status checking"
+    },
+    "launcher.py": {
+      "url": "https://example.com/versions/latest/launcher.py",
+      "description": "Launching thingy"
+    }
+  }
+}
