@@ -170,3 +170,4 @@ def run_mc(
     un.Info_log.info("running minecraft... with %s", _command)
     main_process = subprocess.Popen(args=_command)
     main_process.wait()
+    

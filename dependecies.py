@@ -1,6 +1,7 @@
 import subprocess
 import sys
 from typing import List
+import Utils_net
 
 # this for dependencies check
 
@@ -25,4 +26,8 @@ def check():
         try:
             __import__(lib)
         except ImportError:
+            if not Utils_net.check_for_internet():
+                Utils_net.Info_log.info("No internet connection found")
+                exit(1)
             install()
+            break

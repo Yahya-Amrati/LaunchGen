@@ -33,3 +33,4 @@ build/Launcher/localpycs/struct.pyc
 __pycache__/dependecies.cpython-313.pyc
 .idea/modules.xml
 .idea/inspectionProfiles/profiles_settings.xml
+__pycache__/run.cpython-313.pyc
