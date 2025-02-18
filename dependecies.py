@@ -1,5 +1,7 @@
 import subprocess
 import sys
+import downloads
+import os
 from typing import List
 import Utils_net
 
@@ -14,20 +16,20 @@ libs: List[str] = [
         "urllib3"
         ]
 
-def install():
+def install(path: str) -> None:
     """install dependencies"""
     print("Installing dependencies...")
-    command = [sys.executable, "-m", "pip", "install", "-r", "requirements.txt"]
+    print(f"Path: {path}")
+    command = [sys.executable, "-m", "pip", "install", "-r", f"{os.path.join(path, 'requirements.txt')}"]
     subprocess.run(command, check=True, text=True)
 
-def check():
+def check(path: str) -> None:
     """check if dependencies are installed"""
-    for lib in libs:
-        try:
+    try:
+        for lib in libs:
             __import__(lib)
-        except ImportError:
-            if not Utils_net.check_for_internet():
-                Utils_net.Info_log.info("No internet connection found")
-                exit(1)
-            install()
-            break
+    except ImportError:
+        if not Utils_net.check_for_internet():
+            Utils_net.Info_log.info("No internet connection found")
+            return
+        install(path)

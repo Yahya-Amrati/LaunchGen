@@ -1,5 +1,5 @@
 import json
-from typing import Callable, List
+from typing import Callable, Dict
 import os
 import requests
 from requests.adapters import HTTPAdapter
@@ -7,7 +7,7 @@ import urllib3
 import Utils_minecraft
 import Utils_net
 
-path: str = os.path.join(Utils_minecraft.local_path(), "LaunchGen")
+path: str = Utils_minecraft.local_path()
 session = requests.Session()
 Retry = urllib3.Retry(total=5, backoff_factor=1, status_forcelist=[500, 502, 503, 504])
 session.mount("https://", HTTPAdapter(max_retries=Retry))
@@ -42,16 +42,16 @@ def download(data: dict) -> None:
     """this is a function for downloading data"""
     os.makedirs(path, exist_ok=True)
     os.chdir(path)
-    url: List[str] = data.get("latest")["urls"]
-    for i in url:
+    data: Dict[str] = data.get("latest")
+    for i in data:
         Utils_net.Info_log.info("Downloading %s", i)
-        response = session.get(i)
-        response.raise_for_status()
-        with open(os.path.join(path, data.get("latest")["filename"]), "wb") as f:
+        print(data[i]["url"])
+        response = session.get(data[i]["url"])
+        with open(os.path.join(path, i), "wb") as f:
             f.write(response.content)
-
+    return
 def main() -> None:
-    FETCH_URL = "..."
+    FETCH_URL = "https://raw.githubusercontent.com/Yahya-Amrati/LaunchGen/refs/heads/main/version.json"
     data = fetch(FETCH_URL)
     download(data)
     Utils_net.Info_log.info("Downloads finished")

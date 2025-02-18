@@ -64,6 +64,7 @@ def install_launcher_skeleton(path: str) -> None:
 
 def local_path() -> str:
     """this is a function for getting the local path"""
+    print(globals()["__file__"])
     return os.path.dirname(os.path.realpath(globals()["__file__"])) or os.getcwd()
 
 def options_check(options: List[bool]) -> bool:
