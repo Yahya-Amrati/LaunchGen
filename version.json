@@ -31,6 +31,10 @@
     "launcher.py": {
       "url": "https://raw.githubusercontent.com/Yahya-Amrati/LaunchGen/refs/heads/launcher.py",
       "description": "Launching thingy"
+    },
+    "requirements.txt":{
+      "url":"https://raw.githubusercontent.com/Yahya-Amrati/LaunchGen/refs/heads/main/requirements.txt",
+      "description": "List of all the dependencies"
     }
   }
 }
