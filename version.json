@@ -1,36 +1,40 @@
 {
   "latest": {
     "UI.py": {
-      "url": "https://raw.githubusercontent.com/Yahya-Amrati/LaunchGen/refs/heads/UI.py",
+      "url": "https://raw.githubusercontent.com/Yahya-Amrati/LaunchGen/refs/heads/main/UI.py",
       "description": "Main application window and GUI components using Tkinter"
     },
     "downloads.py": {
-      "url": "https://raw.githubusercontent.com/Yahya-Amrati/LaunchGen/refs/heads/downloads.py",
+      "url": "https://raw.githubusercontent.com/Yahya-Amrati/LaunchGen/refs/heads/main/downloads.py",
       "description": "Download management system with queue and progress tracking"
     },
     "Utils_minecraft.py": {
-      "url": "https://raw.githubusercontent.com/Yahya-Amrati/LaunchGen/refs/heads/Utils_minecraft.py",
+      "url": "https://raw.githubusercontent.com/Yahya-Amrati/LaunchGen/refs/heads/main/Utils_minecraft.py",
       "description": "Minecraft-specific path handling and version validation utilities"
     },
     "dependencies.py": {
-      "url": "https://raw.githubusercontent.com/Yahya-Amrati/LaunchGen/refs/heads/dependencies.py",
+      "url": "https://raw.githubusercontent.com/Yahya-Amrati/LaunchGen/refs/heads/main/dependencies.py",
       "description": "Package dependency management and installation system"
     },
     "Gen.py": {
-      "url": "https://raw.githubusercontent.com/Yahya-Amrati/LaunchGen/refs/heads/Gen.py",
+      "url": "https://raw.githubusercontent.com/Yahya-Amrati/LaunchGen/refs/heads/main/Gen.py",
       "description": "World generation algorithms and structure creation utilities"
     },
     "Data_structure.py": {
-      "url": "https://raw.githubusercontent.com/Yahya-Amrati/LaunchGen/refs/heads/Data_structure.py",
+      "url": "https://raw.githubusercontent.com/Yahya-Amrati/LaunchGen/refs/heads/main/Data_structure.py",
       "description": "Dataclasses for Minecraft server configurations and world structures"
     },
     "Utils_net.py": {
-      "url": "hhttps://raw.githubusercontent.com/Yahya-Amrati/LaunchGen/refs/heads/Utils_net.py",
+      "url": "https://raw.githubusercontent.com/Yahya-Amrati/LaunchGen/refs/heads/main/Utils_net.py",
       "description": "Network utilities for server ping and status checking"
     },
     "launcher.py": {
-      "url": "https://raw.githubusercontent.com/Yahya-Amrati/LaunchGen/refs/heads/launcher.py",
+      "url": "https://raw.githubusercontent.com/Yahya-Amrati/LaunchGen/refs/heads/main/launcher.py",
       "description": "Launching thingy"
+    },
+    "requirements.txt":{
+      "url":"https://raw.githubusercontent.com/Yahya-Amrati/LaunchGen/refs/heads/main/requirements.txt",
+      "description": "List of all the dependencies"
     }
   }
 }
