@@ -27,7 +27,7 @@ def make_launcher(data: dict) -> None:
             else:
                 Utils_net.Error_log.error("Missing required file: %s", file)
                 return
-
+        Utils_net.Info_log.info("Compiling the script in path: %s", launcher_path)
         compile_script("Launcher.py", launcher_path)
 
     except OSError:
@@ -38,8 +38,16 @@ def make_launcher(data: dict) -> None:
 
 def compile_script(script_name: str, out: str) -> None:
     try:
-        command: List[str] = f"{os.path.join(sys.prefix, 'Scripts', 'pyinstaller') if os.name == 'nt' else os.path.join(sys.prefix, 'bin', 'pyinstaller')} --onefile --distpath {out} {script_name}".split(" ")
-        subprocess.run(command, check=True)
+        command = [
+            os.path.join(sys.prefix, 'Scripts', 'pyinstaller') if os.name == 'nt' else os.path.join(sys.prefix, 'bin', 'pyinstaller'),
+            '--onefile',
+            '--distpath',
+            out,
+            script_name
+        ]
+
+        result = subprocess.run(command, check=True)
+        Utils_net.Info_log.info("PyInstaller finished with return code: %s", result.returncode)
     except subprocess.CalledProcessError as e:
         Utils_net.Error_log.error("PyInstaller failed with error: %s", e)
     except Exception as e:
